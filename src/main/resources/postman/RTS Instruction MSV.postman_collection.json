@@ -1,0 +1,112 @@
+{
+	"info": {
+		"_postman_id": "288ffb7a-c47a-4093-bc1a-db659800a889",
+		"name": "RTS Instruction MSV",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "22065047"
+	},
+	"item": [
+		{
+			"name": "Create new instruction",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"guidelines\":\"Hello World\",\r\n    \"accountId\":1\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8800/instructions",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8800",
+					"path": [
+						"instructions"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update instruction by Id",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"id\":1,\r\n    \"guidelines\":\"By World\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8800/instructions/1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8800",
+					"path": [
+						"instructions",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get instruction by id",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8800/instructions/1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8800",
+					"path": [
+						"instructions",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get instruction by account id",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8800/instructions?accountId=1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8800",
+					"path": [
+						"instructions"
+					],
+					"query": [
+						{
+							"key": "accountId",
+							"value": "1"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
