@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.*;
  * This class is used to define the endpoints for the Currency Controller
  */
 @RestController
+@CrossOrigin(origins = "*", allowedHeaders = "*")
 public class InstructionController {
 
     private final Logger log = LoggerFactory.getLogger(InstructionController.class);
