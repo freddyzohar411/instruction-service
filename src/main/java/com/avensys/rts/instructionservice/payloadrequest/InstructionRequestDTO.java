@@ -23,13 +23,10 @@ import java.util.List;
 public class InstructionRequestDTO {
     private Integer id;
     private String guidelines;
-
-    @NotNull
     private Integer accountId;
+    private Integer entityId;
+    private String entityType;
 
-//    @NotNull(message = "File cannot be null")
-//    @ValidPdfFile(message = "File must be a PDF file")
-//    @FileSize(maxSize = 1, message = "File size must be less than 1MB")
-//    private List<MultipartFile> files;
-//    private MultipartFile[] files;
+    private Integer formId;
+    private String formData;
 }

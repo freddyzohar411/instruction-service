@@ -18,4 +18,9 @@ public class InstructionUpdateRequestDTO {
     private Integer id;
     private String guidelines;
     private Integer accountId;
+    private Integer entityId;
+    private String entityType;
+
+    private Integer formId;
+    private String formData;
 }

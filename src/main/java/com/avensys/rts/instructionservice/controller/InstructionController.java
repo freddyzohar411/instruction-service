@@ -35,6 +35,7 @@ public class InstructionController {
 
     /**
      * This method is used to create a instruction
+     *
      * @param instructionRequest
      * @return HttpResponse with instructionResponseDTO
      */
@@ -47,6 +48,7 @@ public class InstructionController {
 
     /**
      * This endpoint is to get instruction by Id
+     *
      * @param instructionId
      * @return
      */
@@ -59,6 +61,7 @@ public class InstructionController {
 
     /**
      * This endpoint is to get instruction by account Id
+     *
      * @param accountId
      * @return
      */
@@ -69,14 +72,22 @@ public class InstructionController {
         return ResponseUtil.generateSuccessResponse(instructionResponse, HttpStatus.OK, messageSource.getMessage(MessageConstants.MESSAGE_SUCCESS, null, LocaleContextHolder.getLocale()));
     }
 
+    @GetMapping(value = "/instructions/entity/{entityType}/{entityId}")
+    public ResponseEntity<Object> getInstructionByEntityId(@PathVariable String entityType, @PathVariable int entityId) {
+        log.info("Instruction get by entity id: Controller");
+        InstructionResponseDTO instructionResponse = instructionService.getInstructionByEntityTypeAndEntityId(entityType, entityId);
+        return ResponseUtil.generateSuccessResponse(instructionResponse, HttpStatus.OK, messageSource.getMessage(MessageConstants.MESSAGE_SUCCESS, null, LocaleContextHolder.getLocale()));
+    }
+
     /**
      * This endpoint is to update instruction by Id
+     *
      * @param instructionId
      * @param instructionUpdateRequest
      * @return
      */
     @PutMapping(value = "/instructions/{instructionId}")
-    public ResponseEntity<Object> updateInstructionById(@PathVariable int instructionId, @Valid @RequestBody InstructionUpdateRequestDTO instructionUpdateRequest) {
+    public ResponseEntity<Object> updateInstructionById(@PathVariable int instructionId, @Valid @RequestBody InstructionRequestDTO instructionUpdateRequest) {
         log.info("Instruction update by id: Controller");
         InstructionResponseDTO instructionResponse = instructionService.updateInstructionById(instructionId, instructionUpdateRequest);
         return ResponseUtil.generateSuccessResponse(instructionResponse, HttpStatus.OK, messageSource.getMessage(MessageConstants.MESSAGE_SUCCESS, null, LocaleContextHolder.getLocale()));

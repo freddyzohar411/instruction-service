@@ -23,13 +23,22 @@ public class InstructionEntity {
     @Column(name = "type", length = 250 )
     private String type;
 
-    @Column(name = "guidelines", length = 250 )
+    @Column(name = "guidelines", columnDefinition = "TEXT")
     private String guideLines;
 
     @Column(name = "account_id")
     private Integer accountId;
 
+    @Column(name = "entity_type" )
+    private String entityType;
+
     @Column(name = "entity_id")
     private Integer entityId;
+
+    @Column(name = "form_id")
+    private Integer formId;
+
+    @Column(name = "form_submission_id")
+    private Integer formSubmissionId;
 
 }

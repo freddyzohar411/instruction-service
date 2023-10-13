@@ -17,6 +17,10 @@ import org.springframework.web.multipart.MultipartFile;
 @NoArgsConstructor
 public class InstructionResponseDTO {
     private Integer id;
-//    private String type;
+    private Integer accountId;
     private String guidelines;
+
+    private Integer formId;
+    private String submissionData;
+    private Integer formSubmissionId;
 }

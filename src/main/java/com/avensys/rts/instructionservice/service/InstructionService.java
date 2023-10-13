@@ -37,5 +37,8 @@ public interface InstructionService {
      * @param InstructionRequest
      * @return
      */
-    InstructionResponseDTO updateInstructionById(int instructionId, InstructionUpdateRequestDTO InstructionRequest);
+    InstructionResponseDTO updateInstructionById(int instructionId, InstructionRequestDTO InstructionRequest);
+
+    InstructionResponseDTO getInstructionByEntityTypeAndEntityId(String entityType, Integer entityId);
+
 }

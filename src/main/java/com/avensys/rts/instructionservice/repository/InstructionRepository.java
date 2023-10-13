@@ -11,4 +11,7 @@ import java.util.Optional;
  */
 public interface InstructionRepository extends JpaRepository<InstructionEntity, Integer> {
     Optional<InstructionEntity> findByAccountId(int accountId);
+
+    Optional<InstructionEntity> findByEntityTypeAndEntityId(String entityType, Integer entityId);
+
 }
