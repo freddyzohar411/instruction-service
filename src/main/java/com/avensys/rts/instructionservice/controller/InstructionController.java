@@ -93,4 +93,11 @@ public class InstructionController {
         return ResponseUtil.generateSuccessResponse(instructionResponse, HttpStatus.OK, messageSource.getMessage(MessageConstants.MESSAGE_SUCCESS, null, LocaleContextHolder.getLocale()));
     }
 
+    @DeleteMapping(value = "/instructions/entity/{entityType}/{entityId}")
+    public ResponseEntity<Object> deleteInstructionByEntityId(@PathVariable String entityType, @PathVariable int entityId) {
+        log.info("Instruction delete by entity id: Controller");
+        instructionService.deleteInstructionByEntityTypeAndEntityId(entityType, entityId);
+        return ResponseUtil.generateSuccessResponse(null, HttpStatus.OK, messageSource.getMessage(MessageConstants.MESSAGE_SUCCESS, null, LocaleContextHolder.getLocale()));
+    }
+
 }

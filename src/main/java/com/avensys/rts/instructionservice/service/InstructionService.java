@@ -41,4 +41,6 @@ public interface InstructionService {
 
     InstructionResponseDTO getInstructionByEntityTypeAndEntityId(String entityType, Integer entityId);
 
+    void deleteInstructionByEntityTypeAndEntityId(String entityType, Integer entityId);
+
 }

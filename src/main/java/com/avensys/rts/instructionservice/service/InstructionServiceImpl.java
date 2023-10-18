@@ -2,6 +2,7 @@ package com.avensys.rts.instructionservice.service;
 
 import com.avensys.rts.instructionservice.APIClient.DocumentAPIClient;
 import com.avensys.rts.instructionservice.APIClient.FormSubmissionAPIClient;
+import com.avensys.rts.instructionservice.APIClient.UserAPIClient;
 import com.avensys.rts.instructionservice.customresponse.HttpResponse;
 import com.avensys.rts.instructionservice.entity.InstructionEntity;
 import com.avensys.rts.instructionservice.payloadrequest.FormSubmissionsRequestDTO;
@@ -9,7 +10,9 @@ import com.avensys.rts.instructionservice.payloadrequest.InstructionRequestDTO;
 import com.avensys.rts.instructionservice.payloadrequest.InstructionUpdateRequestDTO;
 import com.avensys.rts.instructionservice.payloadresponse.FormSubmissionsResponseDTO;
 import com.avensys.rts.instructionservice.payloadresponse.InstructionResponseDTO;
+import com.avensys.rts.instructionservice.payloadresponse.UserResponseDTO;
 import com.avensys.rts.instructionservice.repository.InstructionRepository;
+import com.avensys.rts.instructionservice.util.JwtUtil;
 import com.avensys.rts.instructionservice.util.MappingUtil;
 import jakarta.persistence.EntityNotFoundException;
 import org.slf4j.Logger;
@@ -30,6 +33,9 @@ public class InstructionServiceImpl implements InstructionService {
     private final InstructionRepository instructionRepository;
 
     @Autowired
+    private UserAPIClient userAPIClient;
+
+    @Autowired
     private FormSubmissionAPIClient formSubmissionAPIClient;
 
     public InstructionServiceImpl(InstructionRepository instructionRepository) {
@@ -48,7 +54,7 @@ public class InstructionServiceImpl implements InstructionService {
         InstructionEntity instructionSaved = instructionRepository.save(toInstructionEntity(instructionRequest));
 
         // Set formdata in form submission microservice
-        FormSubmissionsRequestDTO formSubmissionsRequestDTO = instructionRequestDTOTFormSubmissionRequestDTO(instructionRequest);
+        FormSubmissionsRequestDTO formSubmissionsRequestDTO = instructionRequestDTOTFormSubmissionRequestDTO(instructionSaved, instructionRequest);
         HttpResponse formSubmissionResponse = formSubmissionAPIClient.addFormSubmission(formSubmissionsRequestDTO);
         FormSubmissionsResponseDTO formSubmissionData = MappingUtil.mapClientBodyToClass(formSubmissionResponse.getData(), FormSubmissionsResponseDTO.class);
         instructionSaved.setFormSubmissionId(formSubmissionData.getId());
@@ -101,7 +107,7 @@ public class InstructionServiceImpl implements InstructionService {
         InstructionEntity updatedInstructionEntity = toUpdateInstructionEntity(instructionEntity, InstructionRequest);
 
         // Update formdata in form submission microservice
-        FormSubmissionsRequestDTO formSubmissionsRequestDTO = instructionRequestDTOTFormSubmissionRequestDTO(InstructionRequest);
+        FormSubmissionsRequestDTO formSubmissionsRequestDTO = instructionRequestDTOTFormSubmissionRequestDTO(updatedInstructionEntity, InstructionRequest);
         HttpResponse formSubmissionResponse = formSubmissionAPIClient.updateFormSubmission(updatedInstructionEntity.getFormSubmissionId(), formSubmissionsRequestDTO);
         FormSubmissionsResponseDTO formSubmissionData = MappingUtil.mapClientBodyToClass(formSubmissionResponse.getData(), FormSubmissionsResponseDTO.class);
         updatedInstructionEntity.setFormSubmissionId(formSubmissionData.getId());
@@ -120,10 +126,20 @@ public class InstructionServiceImpl implements InstructionService {
         }
     }
 
+    @Override
+    public void deleteInstructionByEntityTypeAndEntityId(String entityType, Integer entityId) {
+        Optional<InstructionEntity> instructionEntityFound = instructionRepository.findByEntityTypeAndEntityId(entityType, entityId);
+        if (instructionEntityFound.isPresent()) {
+            // Delete the form submission
+            formSubmissionAPIClient.deleteFormSubmission(instructionEntityFound.get().getFormSubmissionId());
+
+            // Delete the instruction
+            instructionRepository.delete(instructionEntityFound.get());
+        }
+    }
 
     /**
      * Internal method used to convert DocumentRequestDTO to DocumentEntity
-     *
      * @param instructionRequest
      * @return
      */
@@ -138,6 +154,7 @@ public class InstructionServiceImpl implements InstructionService {
 
     /**
      * Internal method used to update instructionRequestDTO to instructionEntity
+     *
      * @param instructionEntity
      * @param instructionRequest
      * @return
@@ -162,26 +179,33 @@ public class InstructionServiceImpl implements InstructionService {
         instructionResponseDTO.setGuidelines(instructionEntity.getGuideLines());
         instructionResponseDTO.setFormId(instructionEntity.getFormId());
         // Get form data
-        if (instructionEntity.getFormSubmissionId() != null){
+        if (instructionEntity.getFormSubmissionId() != null) {
             HttpResponse formSubmissionResponse = formSubmissionAPIClient.getFormSubmission(instructionEntity.getFormSubmissionId());
             FormSubmissionsResponseDTO formSubmissionData = MappingUtil.mapClientBodyToClass(formSubmissionResponse.getData(), FormSubmissionsResponseDTO.class);
-            instructionResponseDTO.setSubmissionData(formSubmissionData.getSubmissionData());
+            instructionResponseDTO.setSubmissionData(MappingUtil.convertJsonNodeToJSONString(formSubmissionData.getSubmissionData()));
         }
         return instructionResponseDTO;
     }
 
 
-
     /**
      * Internal Method to formsubmissionRequest
      */
-    private FormSubmissionsRequestDTO instructionRequestDTOTFormSubmissionRequestDTO(InstructionRequestDTO instructionRequestDTO) {
+    private FormSubmissionsRequestDTO instructionRequestDTOTFormSubmissionRequestDTO(InstructionEntity instructionEntity, InstructionRequestDTO instructionRequestDTO) {
         FormSubmissionsRequestDTO formSubmissionsRequestDTO = new FormSubmissionsRequestDTO();
-        formSubmissionsRequestDTO.setSubmissionData(instructionRequestDTO.getFormData());
+        formSubmissionsRequestDTO.setUserId(getUserId());
+        formSubmissionsRequestDTO.setSubmissionData(MappingUtil.convertJSONStringToJsonNode(instructionRequestDTO.getFormData()));
         formSubmissionsRequestDTO.setFormId(instructionRequestDTO.getFormId());
-        formSubmissionsRequestDTO.setEntityId(instructionRequestDTO.getEntityId());
+        formSubmissionsRequestDTO.setEntityId(instructionEntity.getId());
         formSubmissionsRequestDTO.setEntityType(instructionRequestDTO.getEntityType());
         return formSubmissionsRequestDTO;
+    }
+
+    private Integer getUserId() {
+        String email = JwtUtil.getEmailFromContext();
+        HttpResponse userResponse = userAPIClient.getUserByEmail(email);
+        UserResponseDTO userData = MappingUtil.mapClientBodyToClass(userResponse.getData(), UserResponseDTO.class);
+        return userData.getId();
     }
 
 }
