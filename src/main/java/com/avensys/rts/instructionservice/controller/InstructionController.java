@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.*;
  * This class is used to define the endpoints for the Currency Controller
  */
 @RestController
+@RequestMapping("/api/instructions")
 @CrossOrigin(origins = "*", allowedHeaders = "*")
 public class InstructionController {
 
@@ -39,7 +40,7 @@ public class InstructionController {
      * @param instructionRequest
      * @return HttpResponse with instructionResponseDTO
      */
-    @PostMapping(value = "/instructions")
+    @PostMapping(value = "")
     public ResponseEntity<Object> createInstruction(@Valid @RequestBody InstructionRequestDTO instructionRequest) {
         log.info("Instruction create: Controller");
         InstructionResponseDTO instructionResponse = instructionService.createInstruction(instructionRequest);
@@ -52,7 +53,7 @@ public class InstructionController {
      * @param instructionId
      * @return
      */
-    @GetMapping(value = "/instructions/{instructionId}")
+    @GetMapping(value = "/{instructionId}")
     public ResponseEntity<Object> getInstructionById(@PathVariable int instructionId) {
         log.info("Instruction get by id: Controller");
         InstructionResponseDTO instructionResponse = instructionService.getInstructionById(instructionId);
@@ -65,14 +66,14 @@ public class InstructionController {
      * @param accountId
      * @return
      */
-    @GetMapping(value = "/instructions")
+    @GetMapping(value = "")
     public ResponseEntity<Object> getInstructionByAccountId(@RequestParam int accountId) {
         log.info("Instruction get by account id: Controller");
         InstructionResponseDTO instructionResponse = instructionService.getInstructionByAccountId(accountId);
         return ResponseUtil.generateSuccessResponse(instructionResponse, HttpStatus.OK, messageSource.getMessage(MessageConstants.MESSAGE_SUCCESS, null, LocaleContextHolder.getLocale()));
     }
 
-    @GetMapping(value = "/instructions/entity/{entityType}/{entityId}")
+    @GetMapping(value = "/entity/{entityType}/{entityId}")
     public ResponseEntity<Object> getInstructionByEntityId(@PathVariable String entityType, @PathVariable int entityId) {
         log.info("Instruction get by entity id: Controller");
         InstructionResponseDTO instructionResponse = instructionService.getInstructionByEntityTypeAndEntityId(entityType, entityId);
@@ -86,14 +87,14 @@ public class InstructionController {
      * @param instructionUpdateRequest
      * @return
      */
-    @PutMapping(value = "/instructions/{instructionId}")
+    @PutMapping(value = "/{instructionId}")
     public ResponseEntity<Object> updateInstructionById(@PathVariable int instructionId, @Valid @RequestBody InstructionRequestDTO instructionUpdateRequest) {
         log.info("Instruction update by id: Controller");
         InstructionResponseDTO instructionResponse = instructionService.updateInstructionById(instructionId, instructionUpdateRequest);
         return ResponseUtil.generateSuccessResponse(instructionResponse, HttpStatus.OK, messageSource.getMessage(MessageConstants.MESSAGE_SUCCESS, null, LocaleContextHolder.getLocale()));
     }
 
-    @DeleteMapping(value = "/instructions/entity/{entityType}/{entityId}")
+    @DeleteMapping(value = "/entity/{entityType}/{entityId}")
     public ResponseEntity<Object> deleteInstructionByEntityId(@PathVariable String entityType, @PathVariable int entityId) {
         log.info("Instruction delete by entity id: Controller");
         instructionService.deleteInstructionByEntityTypeAndEntityId(entityType, entityId);
