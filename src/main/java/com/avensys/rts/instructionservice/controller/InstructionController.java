@@ -40,7 +40,7 @@ public class InstructionController {
      * @param instructionRequest
      * @return HttpResponse with instructionResponseDTO
      */
-    @PostMapping(value = "")
+    @PostMapping(value = "/add")
     public ResponseEntity<Object> createInstruction(@Valid @RequestBody InstructionRequestDTO instructionRequest) {
         log.info("Instruction create: Controller");
         InstructionResponseDTO instructionResponse = instructionService.createInstruction(instructionRequest);
